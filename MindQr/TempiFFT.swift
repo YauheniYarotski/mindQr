@@ -85,6 +85,9 @@ import Accelerate
     private var fftSetup:FFTSetup
     private var hasPerformedFFT: Bool = false
     private var complexBuffer: DSPSplitComplex!
+	
+	var maxMagnitude: Float = 0
+	var minMagnitude: Float = 0
     
     /// Instantiate the FFT.
     /// - Parameter withSize: The length of the sample buffer we'll be analyzing. Must be a power of 2. The resulting ```magnitudes``` are of length ```inSize/2```.
@@ -95,7 +98,7 @@ import Accelerate
         
         self.sampleRate = inSampleRate
         
-        // Check if the size is a power of two
+        // Check if the size is a power of two //TODO: yaya
         let lg2 = logbf(sizeFloat)
         assert(remainderf(sizeFloat, powf(2.0, lg2)) == 0, "size must be a power of 2")
         
@@ -121,7 +124,7 @@ import Accelerate
     /// - Parameter inMonoBuffer: Audio data in mono format
     func fftForward(_ inMonoBuffer:[Float]) {
         
-        var analysisBuffer = inMonoBuffer
+        var analysisBuffer = [Float](repeating: 0.0, count: size)
         
         // If we have a window, apply it now. Since 99.9% of the time the window array will be exactly the same, an optimization would be to create it once and cache it, possibly caching it by size.
         if self.windowType != .none {
@@ -176,7 +179,7 @@ import Accelerate
         
         // Store and square (for better visualization & conversion to db) the magnitudes
         self.magnitudes = [Float](repeating: 0.0, count: self.halfSize)
-        vDSP_zvmags(&(self.complexBuffer!), 1, &self.magnitudes!, 1, UInt(self.halfSize))
+        vDSP_zvmags(&(self.complexBuffer!), 1, &self.magnitudes!, 1, UInt(self.halfSize))//TODO: yaya
         
         self.hasPerformedFFT = true
     }
@@ -207,6 +210,7 @@ import Accelerate
             }
             self.bandMagnitudes[i] = magsAvg
             self.bandFrequencies[i] = self.averageFrequencyInRange(magsStartIdx, magsEndIdx)
+			saveMaxMinMagnitude(magnitede: magsAvg)
         }
         
         self.bandMinFreq = self.bandFrequencies[0]
@@ -269,6 +273,14 @@ import Accelerate
         self.bandMinFreq = self.bandFrequencies[0]
         self.bandMaxFreq = self.bandFrequencies.last
     }
+	
+	func saveMaxMinMagnitude(magnitede: Float) {
+		if magnitede > maxMagnitude {
+			maxMagnitude = magnitede
+		} else if magnitede < minMagnitude {
+			minMagnitude = magnitede
+		}
+	}
     
     private func magIndexForFreq(_ freq: Float) -> Int {
         return Int(Float(self.magnitudes.count) * freq / self.nyquistFrequency)
@@ -311,7 +323,7 @@ import Accelerate
 	func magnitudeDB(at band: Int) -> Float {
 		let magnitude = self.magnitude(at: band)
 		// Incoming magnitudes are linear, making it impossible to see very low or very high values. Decibels to the rescue!
-		let magnitudeDB = toDB(magnitude)
+		let magnitudeDB = TempiFFT.toDB(magnitude)
 		return magnitudeDB
 	}
     
@@ -356,7 +368,7 @@ import Accelerate
         while curFreq <= highFreq {
             var mag = magnitudeAtFrequency(curFreq)
             if (useDB) {
-                mag = max(0, toDB(mag))
+                mag = max(0, TempiFFT.toDB(mag))
             }
             total += mag
             curFreq += self.bandwidth
@@ -366,7 +378,7 @@ import Accelerate
     }
     
     /// A convenience function that converts a linear magnitude (like those stored in ```magnitudes```) to db (which is log 10).
-    private func toDB(_ inMagnitude: Float) -> Float {
+    static func toDB(_ inMagnitude: Float) -> Float {
         // ceil to 128db in order to avoid log10'ing 0
         let magnitude = max(inMagnitude, 0.000000000001)
         return log10f(magnitude)

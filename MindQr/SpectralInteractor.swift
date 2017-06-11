@@ -17,7 +17,7 @@ class SpectralInteractor {
 	
 	var spectralVС: SpectralVС?
 	
-	fileprivate var count: Int = 0
+	fileprivate var second: Int = 0
 	fileprivate var timer: Timer?
 	fileprivate var chanels = [[Float]]()
 	
@@ -49,10 +49,10 @@ private extension SpectralInteractorPrivate {
 		}
 	}
 	
-	func fft(from frame: [Float]) -> TempiFFT {
-		let fft = TempiFFT(withSize: frame.count, sampleRate: Float(Constants.sampleRate))
+	func fft(from sample: [Float]) -> TempiFFT {
+		let fft = TempiFFT(withSize: sample.count, sampleRate: Float(Constants.sampleRate))
 		fft.windowType = TempiFFTWindowType.hanning
-		fft.fftForward(frame)
+		fft.fftForward(sample)
 		fft.calculateLinearBands(minFrequency: 0, maxFrequency: 49, numberOfBands: 49)
 		return fft
 	}
@@ -60,16 +60,16 @@ private extension SpectralInteractorPrivate {
 	@objc func updateVC() {
 		var ffts = [TempiFFT]()
 		for chanel in chanels {
-			let firstSample = self.count * Constants.sampleRate
-			let lastSample = firstSample + Constants.sampleRate
-			let frame = Array(chanel[firstSample..<lastSample])
-			let ttf = fft(from: frame)
+			let firstFrameOfSecond = second * Constants.sampleRate
+			let frameOfNextSecond = firstFrameOfSecond + Constants.sampleRate
+			let sample = Array(chanel[firstFrameOfSecond..<frameOfNextSecond])
+			let ttf = fft(from: sample)
 			ffts.append(ttf)
 		}
 		spectralVС?.update(with: ffts)
-		self.count = self.count + 1
-		if self.count == chanels.first!.count/Constants.sampleRate {
-			self.count = 0
+		self.second = self.second + 1
+		if self.second == chanels.first!.count/Constants.sampleRate {
+			self.second = 0
 		}
 		
 	}

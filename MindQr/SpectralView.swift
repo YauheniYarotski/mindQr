@@ -12,14 +12,16 @@ import UIKit
 class SpectralView: UIView {
 	
 	struct Constants {
-		static let maxDB: Float = 15.0
-		static let minDB: Float = 0.0
 		static let colors = [UIColor.red.cgColor, UIColor.yellow.cgColor, UIColor.green.cgColor, UIColor.blue.cgColor, UIColor.purple.cgColor]
 		static let gradient = CGGradient(
 			colorsSpace: nil, // generic color space
 			colors: colors as CFArray,
 			locations: [0.015, 0.125, 0.2, 0.45, 0.7])
 	}
+	
+	
+	private let maxDB: Float = 15.0
+	private let minDB: Float = 0.0
 	
 	var fft: TempiFFT!
 	// Draw the spectrum.
@@ -52,7 +54,7 @@ class SpectralView: UIView {
 		
 		let count = fft.numberOfBands
 		
-		let headroom = Constants.maxDB - Constants.minDB
+		let headroom = maxDB - minDB
 		let colWidth = viewWidth / CGFloat(count)
 		
 		for band in 0..<count {
@@ -60,7 +62,7 @@ class SpectralView: UIView {
 			var magnitudeDB = fft.magnitudeDB(at: band)
 			
 			// Normalize the incoming magnitude so that -Inf = 0
-			magnitudeDB = max(0, magnitudeDB + abs(Constants.minDB))
+			magnitudeDB = max(0, magnitudeDB + abs(minDB))
 			
 			let dbRatio = min(1.0, magnitudeDB / headroom)
 			let magnitudeNorm = CGFloat(dbRatio) * viewHeight
