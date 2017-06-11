@@ -11,15 +11,18 @@ import UIKit
 
 class SpectralView: UIView {
 	
+	struct Constants {
+		static let maxDB: Float = 15.0
+		static let minDB: Float = 0.0
+		static let colors = [UIColor.red.cgColor, UIColor.yellow.cgColor, UIColor.green.cgColor, UIColor.blue.cgColor, UIColor.purple.cgColor]
+		static let gradient = CGGradient(
+			colorsSpace: nil, // generic color space
+			colors: colors as CFArray,
+			locations: [0.015, 0.125, 0.2, 0.45, 0.7])
+	}
+	
 	var fft: TempiFFT!
 	// Draw the spectrum.
-	let maxDB: Float = 15.0
-	let minDB: Float = 0.0
-	static let colors = [UIColor.red.cgColor, UIColor.yellow.cgColor, UIColor.green.cgColor, UIColor.blue.cgColor, UIColor.purple.cgColor]
-	let gradient = CGGradient(
-		colorsSpace: nil, // generic color space
-		colors: colors as CFArray,
-		locations: [0.015, 0.125, 0.2, 0.45, 0.7])
 	
 	override func draw(_ rect: CGRect) {
 		
@@ -49,17 +52,15 @@ class SpectralView: UIView {
 		
 		let count = fft.numberOfBands
 		
-		let headroom = maxDB - minDB
+		let headroom = Constants.maxDB - Constants.minDB
 		let colWidth = viewWidth / CGFloat(count)
 		
 		for band in 0..<count {
-			let magnitude = fft.magnitudeAtBand(band)
-			
 			// Incoming magnitudes are linear, making it impossible to see very low or very high values. Decibels to the rescue!
-			var magnitudeDB = TempiFFT.toDB(magnitude)
+			var magnitudeDB = fft.magnitudeDB(at: band)
 			
 			// Normalize the incoming magnitude so that -Inf = 0
-			magnitudeDB = max(0, magnitudeDB + abs(minDB))
+			magnitudeDB = max(0, magnitudeDB + abs(Constants.minDB))
 			
 			let dbRatio = min(1.0, magnitudeDB / headroom)
 			let magnitudeNorm = CGFloat(dbRatio) * viewHeight
@@ -71,7 +72,7 @@ class SpectralView: UIView {
 			
 			context.saveGState()
 			context.clip(to: colRect)
-			context.drawLinearGradient(gradient!, start: startPoint, end: endPoint, options: CGGradientDrawingOptions(rawValue: 0))
+			context.drawLinearGradient(Constants.gradient!, start: startPoint, end: endPoint, options: CGGradientDrawingOptions(rawValue: 0))
 			context.restoreGState()
 			
 			x += colWidth
@@ -107,7 +108,7 @@ class SpectralView: UIView {
 			let x = freq / samplesPerPixel - pointSize / 2.0
 			attrStr.draw(at: CGPoint(x: x, y: -10))
 		}
-		let str = fft.magnitudeAtBand(0).description
+		let str = fft.magnitudeDB(at: 0).description
 		let attrStrXMax = NSMutableAttributedString(string: str)
 		attrStrXMax.addAttribute(NSFontAttributeName, value: font, range: NSMakeRange(0, str.characters.count))
 		attrStrXMax.addAttribute(NSForegroundColorAttributeName, value: UIColor.yellow, range: NSMakeRange(0, str.characters.count))
@@ -116,24 +117,4 @@ class SpectralView: UIView {
 		
 		context.restoreGState()
 	}
-	
-//	func bandColor(for band: Int) -> CGColor {
-//		var color: CGColor?
-//		switch band {
-//		case 0..<5:
-//			color = UIColor.red.cgColor
-//		case 5..<8:
-//			color = UIColor.yellow.cgColor
-//		case 8..<14:
-//			color = UIColor.green.cgColor
-//		case 14..<30:
-//			color = UIColor.blue.cgColor
-//		case 30...49:
-//			color = UIColor.purple.cgColor
-//		default:
-//			color = UIColor.black.cgColor
-//			print("band out of color range")
-//		}
-//		return color ?? UIColor.black.cgColor
-//	}
 }

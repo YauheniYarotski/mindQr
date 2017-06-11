@@ -301,12 +301,19 @@ import Accelerate
     
     /// Get the magnitude for the specified frequency band.
     /// - Parameter inBand: The frequency band you want a magnitude for.
-    func magnitudeAtBand(_ inBand: Int) -> Float {
+    func magnitude(at band: Int) -> Float {
         assert(hasPerformedFFT, "*** Perform the FFT first.")
         assert(bandMagnitudes != nil, "*** Call calculateLinearBands() or calculateLogarithmicBands() first")
         
-        return bandMagnitudes[inBand]
+        return bandMagnitudes[band]
     }
+	
+	func magnitudeDB(at band: Int) -> Float {
+		let magnitude = self.magnitude(at: band)
+		// Incoming magnitudes are linear, making it impossible to see very low or very high values. Decibels to the rescue!
+		let magnitudeDB = toDB(magnitude)
+		return magnitudeDB
+	}
     
     /// Get the magnitude of the requested frequency in the spectrum.
     /// - Parameter inFrequency: The requested frequency. Must be less than the Nyquist frequency (```sampleRate/2```).
@@ -349,7 +356,7 @@ import Accelerate
         while curFreq <= highFreq {
             var mag = magnitudeAtFrequency(curFreq)
             if (useDB) {
-                mag = max(0, TempiFFT.toDB(mag))
+                mag = max(0, toDB(mag))
             }
             total += mag
             curFreq += self.bandwidth
@@ -359,7 +366,7 @@ import Accelerate
     }
     
     /// A convenience function that converts a linear magnitude (like those stored in ```magnitudes```) to db (which is log 10).
-    class func toDB(_ inMagnitude: Float) -> Float {
+    private func toDB(_ inMagnitude: Float) -> Float {
         // ceil to 128db in order to avoid log10'ing 0
         let magnitude = max(inMagnitude, 0.000000000001)
         return log10f(magnitude)
