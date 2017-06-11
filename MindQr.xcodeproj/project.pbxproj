@@ -10,8 +10,12 @@
 		F7417D291EED70AB00429C70 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7417D281EED70AB00429C70 /* AppDelegate.swift */; };
 		F7417D301EED70AB00429C70 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F7417D2F1EED70AB00429C70 /* Assets.xcassets */; };
 		F7417D331EED70AB00429C70 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F7417D311EED70AB00429C70 /* LaunchScreen.storyboard */; };
-		F7646EEE1EED71280050BC5F /* LaunchVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7646EED1EED71280050BC5F /* LaunchVC.swift */; };
 		F7646EF11EED71FC0050BC5F /* sample.json in Resources */ = {isa = PBXBuildFile; fileRef = F7646EF01EED71FC0050BC5F /* sample.json */; };
+		F7646EF51EED76D70050BC5F /* SpectralVС.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7646EF41EED76D70050BC5F /* SpectralVС.swift */; };
+		F7646EF71EED778A0050BC5F /* SpectralView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7646EF61EED778A0050BC5F /* SpectralView.swift */; };
+		F7646EFB1EED77CA0050BC5F /* TempiFFT.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7646EF81EED77CA0050BC5F /* TempiFFT.swift */; };
+		F7646EFD1EED77CA0050BC5F /* TempiDebug.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7646EFA1EED77CA0050BC5F /* TempiDebug.swift */; };
+		F7646EFF1EED78800050BC5F /* SpectralInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7646EFE1EED78800050BC5F /* SpectralInteractor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,8 +24,12 @@
 		F7417D2F1EED70AB00429C70 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F7417D321EED70AB00429C70 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F7417D341EED70AB00429C70 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F7646EED1EED71280050BC5F /* LaunchVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LaunchVC.swift; sourceTree = "<group>"; };
 		F7646EF01EED71FC0050BC5F /* sample.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = sample.json; sourceTree = "<group>"; };
+		F7646EF41EED76D70050BC5F /* SpectralVС.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SpectralVС.swift"; sourceTree = "<group>"; };
+		F7646EF61EED778A0050BC5F /* SpectralView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpectralView.swift; sourceTree = "<group>"; };
+		F7646EF81EED77CA0050BC5F /* TempiFFT.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TempiFFT.swift; sourceTree = "<group>"; };
+		F7646EFA1EED77CA0050BC5F /* TempiDebug.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TempiDebug.swift; sourceTree = "<group>"; };
+		F7646EFE1EED78800050BC5F /* SpectralInteractor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpectralInteractor.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,17 +74,9 @@
 		F7646EEB1EED70EF0050BC5F /* Screens */ = {
 			isa = PBXGroup;
 			children = (
-				F7646EEC1EED70FF0050BC5F /* Launch */,
+				F7646EF31EED76BF0050BC5F /* Spectr */,
 			);
 			name = Screens;
-			sourceTree = "<group>";
-		};
-		F7646EEC1EED70FF0050BC5F /* Launch */ = {
-			isa = PBXGroup;
-			children = (
-				F7646EED1EED71280050BC5F /* LaunchVC.swift */,
-			);
-			name = Launch;
 			sourceTree = "<group>";
 		};
 		F7646EEF1EED71C90050BC5F /* Resources */ = {
@@ -94,6 +94,18 @@
 				F7417D281EED70AB00429C70 /* AppDelegate.swift */,
 			);
 			name = Core;
+			sourceTree = "<group>";
+		};
+		F7646EF31EED76BF0050BC5F /* Spectr */ = {
+			isa = PBXGroup;
+			children = (
+				F7646EF41EED76D70050BC5F /* SpectralVС.swift */,
+				F7646EFE1EED78800050BC5F /* SpectralInteractor.swift */,
+				F7646EF61EED778A0050BC5F /* SpectralView.swift */,
+				F7646EF81EED77CA0050BC5F /* TempiFFT.swift */,
+				F7646EFA1EED77CA0050BC5F /* TempiDebug.swift */,
+			);
+			name = Spectr;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -169,8 +181,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F7646EFF1EED78800050BC5F /* SpectralInteractor.swift in Sources */,
 				F7417D291EED70AB00429C70 /* AppDelegate.swift in Sources */,
-				F7646EEE1EED71280050BC5F /* LaunchVC.swift in Sources */,
+				F7646EFD1EED77CA0050BC5F /* TempiDebug.swift in Sources */,
+				F7646EF51EED76D70050BC5F /* SpectralVС.swift in Sources */,
+				F7646EFB1EED77CA0050BC5F /* TempiFFT.swift in Sources */,
+				F7646EF71EED778A0050BC5F /* SpectralView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

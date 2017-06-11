@@ -15,10 +15,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-		let launchVC = LaunchVC(nibName: nil, bundle: nil)
+		let spectralVС = SpectralVС(nibName: nil, bundle: nil)
 		window = UIWindow(frame: UIScreen.main.bounds)
-		window?.backgroundColor = UIColor.white
-		window?.rootViewController = launchVC
+		window?.rootViewController = spectralVС
 		window?.makeKeyAndVisible()
 		return true
 	}
